@@ -35,6 +35,7 @@
       </div>
       <div class="viewbox-form-title">
         <div>ViewBox</div>
+        <button mat-flat-button (click)="centerViewbox()" color="basic" class="center-button" style="margin-right: 8px">Center</button>
         <button mat-flat-button (click)="refreshViewbox()" color="basic" class="reset-button">Reset</button>
       </div>
       <div class="viewbox-form-field">
@@ -79,6 +80,9 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button (click)="onCancel()" color="basic">Cancel</button>
+  <button id="export-copy" mat-raised-button (click)="onCopy()" color="primary" [disabled]="false" style="width: 94.34px">
+    Copy
+  </button>
   <button mat-raised-button (click)="onExport()" color="primary" [disabled]="false">
     Download
   </button>

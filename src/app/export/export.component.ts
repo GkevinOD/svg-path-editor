@@ -42,6 +42,24 @@ export class ExportDialogComponent {
     setTimeout(() => window.URL.revokeObjectURL(anchor.href), 100);
   }
 
+  copyToClipboard(data: string) {
+    const copyButton = document.getElementById('export-copy')
+    if (copyButton) {
+      let isCopied = false;
+      navigator.clipboard.writeText(data).then(function() {
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+            copyButton.textContent = 'Copy';
+        }, 1000);
+      }, function() {
+        copyButton.textContent = 'Error!';
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+        }, 1000);
+      });
+    }
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
@@ -53,6 +71,13 @@ export class ExportDialogComponent {
     this.download(this.data.name || 'svg-path.svg', svg);
     this.dialogRef.close();
   }
+  onCopy(): void {
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${this.x} ${this.y} ${this.width} ${this.height}">
+  <path d="${this.data.path}"${this.cfg.stroke ? ` stroke="${this.cfg.strokeColor}" stroke-width="${this.cfg.strokeWidth}"` : ''} fill="${this.cfg.fill ? this.cfg.fillColor : 'none'}"/>
+</svg>`;
+    this.copyToClipboard(svg);
+    }
 
   refreshViewbox() {
     const p = new Svg(this.data.path);
@@ -74,6 +99,19 @@ export class ExportDialogComponent {
       this.y = parseFloat(this.y.toPrecision(6));
       this.width = parseFloat(this.width.toPrecision(4));
       this.height = parseFloat(this.height.toPrecision(4));
+    }
+  }
+
+  centerViewbox() {
+    const p = new Svg(this.data.path);
+    const locs = p.targetLocations();
+    if (locs.length > 0) {
+      const bbox = browserComputePathBoundingBox(this.data.path);
+
+      this.x = bbox.x + bbox.width / 2 - this.width / 2;
+      this.y = bbox.y + bbox.height / 2 - this.height / 2;
+      this.x = parseFloat(this.x.toPrecision(6));
+      this.y = parseFloat(this.y.toPrecision(6));
     }
   }
 }
